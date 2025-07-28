@@ -28,9 +28,12 @@ const FormData = mongoose.model("FormData", FormDataSchema);
 // Save form data (from admin form)
 app.post("/save-form", async (req, res) => {
   try {
-    
-    const saved = await FormData.create(req.body);
-    res.status(201).json({ success: true, data: saved });
+    const updated = await FormData.findOneAndUpdate(
+      {}, // Empty filter means "match any"
+      { $set: req.body },
+      { new: true, upsert: true }
+    );
+    res.status(200).json({ success: true, data: updated });
   } catch (error) {
     console.error("❌ Save error:", error);
     res.status(500).json({ success: false, error: error.message });
